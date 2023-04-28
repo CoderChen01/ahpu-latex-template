@@ -1,0 +1,21 @@
+{
+  "latex-workshop.latex.tools": [
+    {
+      "name": "artratex",
+      "command": "zsh",
+      "args": [
+        "artratex.sh",
+        "1"
+      ]
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "artratex",
+      "tools": [
+        "artratex"
+      ]
+    }
+  ],
+  "latex-workshop.latex.recipe.default": "artratex"
+}
