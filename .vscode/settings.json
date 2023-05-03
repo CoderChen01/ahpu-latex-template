@@ -17,5 +17,6 @@
       ]
     }
   ],
-  "latex-workshop.latex.recipe.default": "artratex"
+  "latex-workshop.latex.recipe.default": "artratex",
+  "latex-workshop.latex.autoBuild.run": "never"
 }

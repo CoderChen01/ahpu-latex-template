@@ -9,6 +9,13 @@
 %- the Free Software Foundation, either version 3 of the License, or
 %- (at your option) any later version.
 %---------------------------------------------------------------------------%
+%- Multiple optional arguments:
+%- [<oneside|twoside|print>]% oneside eprint, twoside eprint, or paper print
+%- [fontset=<adobe|none|...>]% specify font set instead of automatic detection
+%- [scheme=plain]% thesis writing of international students
+%- [draftversion]% show draft version information
+%- [standard options for ctex book class: draft|paper size|font size|...]%
+%---------------------------------------------------------------------------%
 %->> Identification
 %---------------------------------------------------------------------------%
 \NeedsTeXFormat{LaTeX2e}%
@@ -80,10 +87,10 @@
     \clist_set_from_seq:NN \l_tmpa_clist \l_tmpa_seq
     \clist_clear:N \l_tmpb_clist
     \clist_map_inline:Nn \l_tmpa_clist
-      {%
-        \clist_put_right:Nn \l_tmpb_clist 
-          { \ulenhance[#1]{\ulextend{##1}} }
-      }
+    {%
+        \clist_put_right:Nn \l_tmpb_clist
+        { \ulenhance[#1]{\ulextend{##1}} }
+    }
     %\clist_show:N\l_tmpb_clist% show the content of comma list
     \clist_use:Nn \l_tmpb_clist { \\ & }
 }
@@ -130,7 +137,7 @@
 %- specifies the amount of space between paragraphs.
 \setlength{\parskip}{0.5ex plus 0.25ex minus 0.25ex}
 %- line spacing
-\linespread{1.6}% line space setting
+\linespread{1.25}% line space setting
 \raggedbottom% prevent adding vertical white space in strange places
 %- default pagestyle is page number at bottom without headers and footers
 \pagestyle{plain}
@@ -140,8 +147,8 @@
 %- redefine cleardoublepage to have page style argument
 \renewcommand{\cleardoublepage}[1][plain]{%
     \clearpage\if@twoside\ifodd\c@page\else%
-    \thispagestyle{#1}%
-    \hbox{}\newpage\if@twocolumn\hbox{}\newpage\fi\fi\fi%
+            \thispagestyle{#1}%
+            \hbox{}\newpage\if@twocolumn\hbox{}\newpage\fi\fi\fi%
 }
 %- underline
 \ifxetex%
@@ -156,7 +163,7 @@
     \expandafter\ulunify\expandafter{#2}% linebreak fix
 }
 \newcommand{\ulhshift}{-4em}% horizontal shift on underline
-\newcommand{\ulextend}[2][350pt]{% extend underline length
+\newcommand{\ulextend}[2][200pt]{% extend underline length
     \hbox to #1{\hfill\hspace*{\ulhshift}#2\hfill}}
 %---------------------------------------------------------------------------%
 %->> Titlepage
@@ -211,336 +218,82 @@
 \def\ucas@value@ch@date{}
 \renewcommand{\date}[1]{\def\ucas@value@ch@date{#1}}
 %-
-%-> English item commands
-%-
-\def\ucas@value@en@title{}
-\def\ucas@value@en@titlemark{}
-\newcommand{\TITLE}[2][\ucas@value@en@title]{%
-    \def\ucas@value@en@title{#2}
-    %\def\ucas@value@en@titlemark{\MakeUppercase{#1}}}
-    \def\ucas@value@en@titlemark{#1}}
-\def\ucas@value@en@author{}
-\newcommand{\AUTHOR}[1]{\def\ucas@value@en@author{#1}}
-\def\ucas@value@en@advisor{}
-\newcommand{\ADVISOR}[1]{\def\ucas@value@en@advisor{#1}}
-\def\ucas@value@en@degree{}
-\newcommand{\DEGREE}[1]{\edef\ucas@value@en@degree{\zap@space#1 \@empty}}% expand and remove space
-\def\ucas@value@en@degreetype{}
-\newcommand{\DEGREETYPE}[1]{\def\ucas@value@en@degreetype{#1}}
-\def\ucas@value@en@thesistype{}
-\newcommand{\THESISTYPE}[1]{\def\ucas@value@en@thesistype{#1}}
-\def\ucas@value@en@major{}
-\newcommand{\MAJOR}[1]{\def\ucas@value@en@major{#1}}
-\def\ucas@value@en@institute{}
-\newcommand{\INSTITUTE}[1]{\def\ucas@value@en@institute{#1}}
-\def\ucas@value@en@school{}
-\newcommand{\SCHOOL}[1]{\def\ucas@value@en@school{#1}}
-\def\ucas@value@en@date{}
-\newcommand{\DATE}[1]{\def\ucas@value@en@date{#1}}
-%-
 %-> Detect and adjust items
 %-
 \AtEndPreamble{%
-    \ucasifstreq{\ucas@value@en@degree}{Bachelor}{%
-        \def\ucas@label@ch@thesis{\ucas@label@ch@thesis@bac}%
-        \def\ucas@label@ch@author{\ucas@label@ch@author@bac}%
-        \def\ucas@label@ch@major{\ucas@label@ch@major@bac}%
-        \def\ucas@label@ch@institute{\ucas@label@ch@institute@bac}%
-        \def\ucas@value@en@thesistype{\ucas@value@en@thesistype@bac}%
-        \def\maketitle{\maketitle@xpdc}
-        \def\MAKETITLE{\MAKETITLE@xpdc}
-    }{%
-    \ucasifstreq{\ucas@value@en@degree}{Master}{%
-        \def\ucas@label@ch@thesis{\ucas@label@ch@thesis@mas}%
-        \def\ucas@label@ch@author{\ucas@label@ch@author@mas}%
-        \def\ucas@label@ch@major{\ucas@label@ch@major@mas}%
-        \def\ucas@label@ch@institute{\ucas@label@ch@institute@mas}%
-        \def\ucas@value@en@thesistype{\ucas@value@en@thesistype@mas}%
-        \def\maketitle{\maketitle@xpdc}
-        \def\MAKETITLE{\MAKETITLE@xpdc}
-    }{%
-    \ucasifstreq{\ucas@value@en@degree}{Doctor}{%
-        \def\ucas@label@ch@thesis{\ucas@label@ch@thesis@doc}%
-        \def\ucas@label@ch@author{\ucas@label@ch@author@doc}%
-        \def\ucas@label@ch@major{\ucas@label@ch@major@doc}%
-        \def\ucas@label@ch@institute{\ucas@label@ch@institute@doc}%
-        \def\ucas@value@en@thesistype{\ucas@value@en@thesistype@doc}%
-        \def\maketitle{\maketitle@xpdc}
-        \def\MAKETITLE{\MAKETITLE@xpdc}
-    }{%
-    \ucasifstreq{\ucas@value@en@degree}{Postdoctor}{%
-        \def\ucas@label@ch@thesis{\ucas@label@ch@thesis@pdc}%
-        \def\ucas@label@ch@author{\ucas@label@ch@author@pdc}%
-        \def\ucas@label@ch@major{\ucas@label@ch@major@pdc}%
-        \def\ucas@label@ch@institute{\ucas@label@ch@institute@pdc}%
-        \def\ucas@value@en@thesistype{\ucas@value@en@thesistype@pdc}%
-        \def\maketitle{\maketitle@pdc}
-        \def\MAKETITLE{\MAKETITLE@pdc}
-    }{%
-        \ClassWarning{ucasthesis}{Invalid value of '\string\DEGREE', please check the spelling}%
-    }}}}%
+    \def\maketitle{\maketitle@ahpu@bachelor}
 }
 %-
 %-> Define Chinese style
 %-
-\newcommand{\maketitle@xpdc}{%
+\newcommand{\maketitle@ahpu@bachelor}{%
     \cleardoublepage
     \thispagestyle{empty}
+
     \begin{center}
-        \linespread{1.6}
-        \zihao{4}\bfseries
+        \vspace*{56pt}
 
-        \hfill{} \ucasifstrbk{\ucas@value@ch@confidential}{}{\ucas@label@ch@confidential \ulenhance{\ulextend[50pt]{\hspace*{-\ulhshift}\zihao{5}\ucas@value@ch@confidential}}}
+        {\zihao{-3}\heiti 安徽工程大学本科 \par}
 
-        \vspace*{\stretch{4}}
+        \vspace*{36pt}
 
-        {\ucas@value@ch@schoollogo}
+        \vspace*{12pt}
 
-        \vspace*{\stretch{2}}
+        {\zihao{2}\heiti 毕业设计（论文） \par}
 
-        {\zihao{1}\bfseries\sffamily {\ucas@label@ch@thesis}}
-
-        \vspace*{\stretch{3}}
-
-        {\zihao{-3}\bfseries\sffamily \ulenhance[1.5pt]{\ucas@value@ch@title}}
-
-        \vspace*{\stretch{3}}
+        \vspace*{36pt}
 
         \def\tabcolsep{1pt}
-        \def\arraystretch{1.3}
+        % \def\arraystretch{1.3}
         \begin{tabular}{lc}
-            \ucas@label@ch@author & \ulenhance[1.2pt]{\ulextend{\ucas@value@ch@author}}\\
-            \ucas@label@ch@advisor & \ucaslntotab[1.2pt]{\ucas@value@ch@advisor}\\
-            \ucas@label@ch@degree & \ulenhance[1.2pt]{\ulextend{\ucas@value@ch@degreetype\ucas@value@ch@degree}}\\
-            \ucas@label@ch@major & \ulenhance[1.2pt]{\ulextend{\ucas@value@ch@major}}\\
-            \ucas@label@ch@institute & \ucaslntotab[1.2pt]{\ucas@value@ch@institute}\\
+            {\zihao{-4}\heiti 专业名称：}   & \ulenhance[1.2pt]{\ulextend{\ahpu@value@major}}     \\
+            {\zihao{-4}\heiti 题目：}     & \ulenhance[1.2pt]{\ulextend{基于计算机视觉的}}              \\
+                                       & \ulenhance[1.2pt]{\ulextend{安全帽识别系统设计与实现}}          \\
+            {\zihao{-4}\heiti 作者姓名：}   & \ulenhance[1.2pt]{\ulextend{\ahpu@value@author}}    \\
+            {\zihao{-4}\heiti 导师及职称：}  & \ulenhance[1.2pt]{\ulextend{\ahpu@value@advisor}}   \\
+            {\zihao{-4}\heiti 导师所在单位：} & \ulenhance[1.2pt]{\ulextend{\ahpu@value@institute}} \\
         \end{tabular}
 
-        \vspace*{\stretch{4}}
+        \vfill{}
 
-        {\ucas@value@ch@date}
-
-        \vspace*{\stretch{4}}
+        {\ahpu@value@date}
     \end{center}
+
     \clearpage
-    \if@twoside
-        \thispagestyle{empty}
-        \ifucas@versioninfo
-            \vspace*{\stretch{1}}
-            \begin{footnotesize}
-                \noindent
-                Draft Version (\today)
-            \end{footnotesize}
-        \fi
-        \cleardoublepage[empty]
-    \else
-        \ifucas@versioninfo
-            \thispagestyle{empty}
-            \vspace*{\stretch{1}}
-            \begin{footnotesize}
-                \noindent
-                Draft Version (\today)
-            \end{footnotesize}
-            \cleardoublepage[empty]
-        \fi
-    \fi
+
     \ifucas@print%
         \hypersetup{% set hyperlinks
             hidelinks,% remove link color and border
         }
     \fi
 }
-\newcommand{\maketitle@pdc}{%
-    \cleardoublepage
-    \thispagestyle{empty}
-    \begin{center}
 
-        \vspace*{30pt}
-
-        \linespread{2.0}
-        \zihao{4}
-
-        \makebox[3.0em][s]{\ucas@label@ch@classid} \ulenhance{\ulextend[6em]{\zihao{5}\ucas@value@ch@classid}} \hfill{} \ucas@label@ch@confidential \ulenhance{\ulextend[6em]{\zihao{5}\ucas@value@ch@confidential}}
-
-        \makebox[3.0em][s]{\ucas@label@ch@udc} \ulenhance{\ulextend[6em]{\zihao{5}\ucas@value@ch@udc}} \hfill{} \ucas@label@ch@orderid \ulenhance{\ulextend[6em]{\zihao{5}\ucas@value@ch@orderid}}
-
-        \vspace*{\stretch{6}}
-
-        {\ziju{1.5}\ucas@value@ch@schoollogo}
-
-        \vspace*{\stretch{1}}
-
-        {\zihao{-2}\bfseries\sffamily{\ziju{0.5}\ucas@label@ch@thesis}}
-
-        \vspace*{\stretch{3}}
-
-        {\zihao{-3} \ulenhance[1.5pt]{\ucas@value@ch@title}}
-
-        \vspace*{\stretch{2.5}}
-
-        \ucas@value@ch@author
-
-        \vspace*{\stretch{2.5}}
-
-        \def\tabcolsep{1pt}
-        \def\arraystretch{1.3}
-        \begin{tabular}{l@{\quad}c}
-            \ucas@label@ch@completedate & \ulenhance{\ulextend[200pt]{\ucas@value@ch@completedate}}\\
-            \ucas@label@ch@submitdate & \ulenhance{\ulextend[200pt]{\ucas@value@ch@submitdate}}\\
-        \end{tabular}
-
-        \vspace*{\stretch{2}}
-
-        \ucas@value@ch@institute
-
-        \ucas@value@ch@date
-
-        \vspace*{\stretch{4}}
-    \end{center}
-    \clearpage
-    \if@twoside
-      \thispagestyle{empty}
-      \cleardoublepage[empty]
-    \fi
-    \ifucas@print%
-        \hypersetup{% set hyperlinks
-            hidelinks,% remove link color and border
-        }
-    \fi
-}
-%-
-%-> Define English style
-%-
-\newcommand{\MAKETITLE@xpdc}{%
-    \cleardoublepage
-    \thispagestyle{empty}
-    \begin{center}
-        \linespread{1.6}
-        \zihao{4}\bfseries
-
-        \vspace*{50pt}
-
-        {\zihao{-3}\bfseries \ulenhance[1.5pt]{\ucas@value@en@title}}
-
-        \vspace*{\stretch{3}}
-
-        {\ucas@label@en@statement}
-
-        {By}
-
-        {\ucas@value@en@author}
-
-        {\ucas@value@en@advisor}
-
-        \vspace*{\stretch{3}}
-
-        {\ucas@value@en@institute}
-
-        \vspace*{\stretch{1}}
-
-        {\ucas@value@en@date}
-
-        \vspace*{\stretch{3}}
-    \end{center}
-    \clearpage
-    \if@twoside
-      \thispagestyle{empty}
-      \cleardoublepage[empty]
-    \fi
-}
-\newcommand{\MAKETITLE@pdc}{%
-    \cleardoublepage
-    \thispagestyle{empty}
-    \begin{center}
-        \linespread{2.0}
-        \zihao{4}
-
-        \vspace*{50pt}
-
-        {\zihao{3} \ucas@value@ch@title}
-
-        \vspace*{\stretch{3}}
-
-        {\zihao{-3} \ucas@value@en@title}
-
-        \vspace*{\stretch{3}}
-
-        \def\tabcolsep{1pt}
-        \def\arraystretch{1.3}
-        \begin{tabular}{l@{\quad}l}
-            \makebox[11em][s]{\ucas@label@ch@author} & \ucas@value@ch@author\\
-            \makebox[11em][s]{\ucas@label@ch@subject} & \ucas@value@ch@subject\\
-            \makebox[11em][s]{\ucas@label@ch@major} & \ucas@value@ch@major\\
-        \end{tabular}
-
-        \vspace*{\stretch{3}}
-
-        \ucas@label@ch@studydatefrom \quad \ucas@value@ch@studydatefrom
-
-        \ucas@label@ch@studydateto \quad \ucas@value@ch@studydateto
-
-        \vspace*{\stretch{3}}
-
-        \ucas@value@ch@orginization
-
-        \ucas@value@ch@date
-
-        \vspace*{\stretch{3}}
-    \end{center}
-    \clearpage
-    \if@twoside
-      \thispagestyle{empty}
-      \cleardoublepage[empty]
-    \fi
-}
 %---------------------------------------------------------------------------%
-%->> Author's declaration
+%-> Task statement
 %---------------------------------------------------------------------------%
-\newcommand{\makedeclaration}{%
-    \cleardoublepage
-    \thispagestyle{empty}
-    {
-        \linespread{1.6}
-        \zihao{-4}
+\newcommand{\maketaskstatement}{%
+\cleardoublepage
+\thispagestyle{empty}
+\begin{center}
+    {\zihao{-3}\heiti 安徽工程大学 \par}
+    {\zihao{-3}\heiti 本科毕业设计（论文）任务书 \par}
+    {\zihao{5}\heiti \uline{2023}届 \uline{计算机与信息}学院 \par}
+    {\zihao{5}\heiti \uline{计算机科学与技术}专业 \par}
+    {\zihao{5}\heiti 学生姓名：\uline{陈俊杰} \par}
+\end{center}
+{\zihao{5}\heiti Ⅰ 毕业设计（论文）题目 \par}
+{\zihao{5}\heiti 中文： \par}
+{\zihao{5}\heiti 英文： \par}
 
-        \vspace*{2ex}
+{\zihao{5}\heiti Ⅱ 原始资料 \par}
 
-        \begin{center}
-            {\zihao{4}\bfseries\sffamily \ucas@label@ch@declare@creativity}
-        \end{center}
+{\zihao{5}\heiti Ⅲ  毕业设计（论文）任务内容 \par}
+{\zihao{5}\songti 1、课题的研究意义 \par}
+{\zihao{5}\songti 2、本课题研究的主要内容 \par}
+{\zihao{5}\songti 3、提交的成果 \par}
 
-        {\ucas@value@ch@declare@creativity}
-
-        \vspace*{3ex}
-
-        {\hfill{} {\ucas@label@ch@declare@author \hspace*{14em}}}
-
-        {\hfill{} {\ucas@label@ch@declare@date \hspace*{14em}}}
-
-        \vspace*{6ex}
-
-        \begin{center}
-            {\zihao{4}\bfseries\sffamily \ucas@label@ch@declare@rights}
-        \end{center}
-
-        {\ucas@value@ch@declare@rights}
-
-        {\ucas@value@ch@declare@rule}
-
-        \vspace*{3ex}
-
-        {\hfill{} {\ucas@label@ch@declare@author \hspace*{10em} \ucas@label@ch@declare@advisor \hspace*{9em}}}
-
-        {\hfill{} {\ucas@label@ch@declare@date \hspace*{10em} \ucas@label@ch@declare@date \hspace*{9em}}}
-
-        \vspace*{3ex}
-    }
-    \clearpage
-    \if@twoside
-        \thispagestyle{empty}
-        \cleardoublepage[empty]
-    \fi
 }
+
 %---------------------------------------------------------------------------%
 %->> New environments
 %---------------------------------------------------------------------------%
@@ -548,10 +301,6 @@
 \newcommand{\keywords}[1]{%
     \vspace{\baselineskip}
     \noindent {\bfseries \ucas@label@ch@keywords} #1}
-%- define engish keywords
-\newcommand{\KEYWORDS}[1]{%
-    \vspace{\baselineskip}
-    \noindent {\bfseries \ucas@label@en@keywords} #1}
 %---------------------------------------------------------------------------%
 %->> Structure elements
 %---------------------------------------------------------------------------%
@@ -606,53 +355,53 @@
 %- chapter
 \ctexset {
     chapter = {
-        format = \linespread{1.0}\zihao{4}\bfseries\sffamily\centering,
-        nameformat = {},
-        titleformat = {},
-        number = \arabic{chapter},
-        numberformat = \rmfamily,
-        aftername = \quad,
-        beforeskip = {7pt},
-        afterskip = {18pt},
-        pagestyle = plain,
-    }
+      format = \linespread{1.0}\zihao{-3}\bfseries\sffamily\songti\centering,
+      nameformat = {},
+      titleformat = {},
+      number = \arabic{chapter},
+      numberformat = \rmfamily,
+      aftername = \quad,
+      beforeskip = {7pt},
+      afterskip = {18pt},
+      pagestyle = plain,
+     }
 }
 %- section
 \ctexset {
     section = {
-        format = \linespread{1.0}\zihao{-4}\sffamily\raggedright,
-        numberformat = \rmfamily,
-        aftername = \quad,
-        beforeskip = {24pt},
-        afterskip = {6pt},
-    }
+      format = \linespread{1.0}\zihao{-4}\sffamily\heiti\raggedright,
+      numberformat = \rmfamily,
+      aftername = \quad,
+      beforeskip = {24pt},
+      afterskip = {6pt},
+     }
 }
 %- subsection
 \ctexset {
     subsection = {
-        format = \linespread{1.0}\zihao{-4}\sffamily\raggedright,
-        numberformat = \rmfamily,
-        aftername = \quad,
-        beforeskip = {12pt},
-        afterskip = {6pt},
-    }
+            format = \linespread{1.0}\zihao{-4}\sffamily\songti\raggedright,
+            numberformat = \rmfamily,
+            aftername = \quad,
+            beforeskip = {12pt},
+            afterskip = {6pt},
+        }
 }
 %- subsubsection
 \ctexset {
     subsubsection = {
-        format = \linespread{1.0}\zihao{-4}\sffamily\raggedright,
-        numberformat = \rmfamily,
-        aftername = \quad,
-        beforeskip = {12pt},
-        afterskip = {6pt},
-    }
+            format = \linespread{1.0}\zihao{-4}\sffamily\songti\raggedright,
+            numberformat = \rmfamily,
+            aftername = \quad,
+            beforeskip = {12pt},
+            afterskip = {6pt},
+        }
 }
 %- appendix
 \ctexset {
     appendix = {
-        %numbering = true|false,
-        %number = \rmfamily\Alph{chapter},
-    }
+            %numbering = true|false,
+            %number = \rmfamily\Alph{chapter},
+        }
 }
 %---------------------------------------------------------------------------%
 %->> Configure table of contents
@@ -678,16 +427,16 @@
     \ifnum #1>\c@tocdepth \else
         \vskip \z@ \@plus.2\p@
         {\leftskip #2\relax \rightskip \@tocrmarg \parfillskip -\rightskip
-        \parindent #2\relax\@afterindenttrue
-        \interlinepenalty\@M
-        \leavevmode \zihao{-4}\sffamily
-        \@tempdima #3\relax
-        \advance\leftskip \@tempdima \null\nobreak\hskip -\leftskip
-        {#4}\nobreak
-        \leaders\hbox{$\m@th\mkern \@dotsep \cdot\mkern \@dotsep$}\hfill
-        \nobreak
-        \hb@xt@\@pnumwidth{\hfil\normalfont \normalcolor #5}%
-        \par\penalty\@highpenalty}%
+            \parindent #2\relax\@afterindenttrue
+            \interlinepenalty\@M
+            \leavevmode \zihao{-4}\sffamily
+            \@tempdima #3\relax
+            \advance\leftskip \@tempdima \null\nobreak\hskip -\leftskip
+            {#4}\nobreak
+            \leaders\hbox{$\m@th\mkern \@dotsep \cdot\mkern \@dotsep$}\hfill
+            \nobreak
+            \hb@xt@\@pnumwidth{\hfil\normalfont \normalcolor #5}%
+            \par\penalty\@highpenalty}%
     \fi
 }
 %- redefine l@part from book.cls to add dotted toc line
@@ -697,15 +446,15 @@
         \addvspace{2.25em \@plus\p@}%
         \setlength\@tempdima{3em}%
         \begingroup
-            \parindent \z@ \rightskip \@pnumwidth
-            \parfillskip -\@pnumwidth
-            {\leavevmode
+        \parindent \z@ \rightskip \@pnumwidth
+        \parfillskip -\@pnumwidth
+        {\leavevmode
             \zihao{4}\sffamily #1
             \leaders\hbox{$\m@th\mkern \@dotsep \cdot\mkern \@dotsep$}% add dotted toc line
             \hfil \hb@xt@\@pnumwidth{\hss #2}}\par
-            \nobreak
-            \global\@nobreaktrue
-            \everypar{\global\@nobreakfalse\everypar{}}%
+        \nobreak
+        \global\@nobreaktrue
+        \everypar{\global\@nobreakfalse\everypar{}}%
         \endgroup
     \fi
 }
@@ -716,15 +465,15 @@
         \vskip \@chaptervspace \@plus\p@
         \setlength\@tempdima{1.5em}%
         \begingroup
-            \parindent \z@ \rightskip \@pnumwidth
-            \parfillskip -\@pnumwidth
-            \leavevmode \zihao{4}\sffamily
-            \advance\leftskip\@tempdima
-            \hskip -\leftskip
-            #1\nobreak
-            \leaders\hbox{$\m@th\mkern \@dotsep \cdot\mkern \@dotsep$}% add dotted toc line
-            \hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
-            \penalty\@highpenalty
+        \parindent \z@ \rightskip \@pnumwidth
+        \parfillskip -\@pnumwidth
+        \leavevmode \zihao{4}\sffamily
+        \advance\leftskip\@tempdima
+        \hskip -\leftskip
+        #1\nobreak
+        \leaders\hbox{$\m@th\mkern \@dotsep \cdot\mkern \@dotsep$}% add dotted toc line
+        \hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+        \penalty\@highpenalty
         \endgroup
     \fi
 }
@@ -738,4 +487,3 @@
 \renewcommand*\l@table{\@dottedtocline{1}{1em}{1.8em}}
 %---------------------------------------------------------------------------%
 \endinput
-
